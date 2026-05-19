@@ -1,4 +1,4 @@
-/* // config/database.js
+// config/database.js
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const fs   = require('fs');
@@ -35,4 +35,4 @@ sequelize.authenticate()
   .then(() => console.log('Conexion a MySQL establecida'))
   .catch(err => console.error('Error conectando:', err.message));
 
-module.exports = sequelize; */
+module.exports = sequelize;

@@ -5,17 +5,14 @@ const fs   = require('fs');
 const path = require('path');
 
 function getSslConfig() {
+  if (process.env.DB_SSL_CA) {
+    return { ssl: { ca: process.env.DB_SSL_CA, rejectUnauthorized: true } };
+  }
   if (process.env.DB_SSL_CA_BASE64) {
-    console.log('Usando SSL desde variable de entorno (longitud:', process.env.DB_SSL_CA_BASE64.length, ')');
     const ca = Buffer.from(process.env.DB_SSL_CA_BASE64, 'base64').toString('utf8');
-    console.log('CA empieza con:', ca.substring(0, 30));
     return { ssl: { ca, rejectUnauthorized: true } };
   }
-  const certPath = path.join(__dirname, '..', 'ca.pem');
-  if (fs.existsSync(certPath)) {
-    return { ssl: { ca: fs.readFileSync(certPath) } };
-  }
-  return {};
+  return { ssl: { rejectUnauthorized: false } };
 }
 
 const sequelize = new Sequelize(
@@ -24,7 +21,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host:           process.env.DB_HOST,
-    port:           parseInt(process.env.DB_PORT) || 3300,
+    port:           parseInt(process.env.DB_PORT) || 3306,
     dialect:        'mysql',
     logging:        false,
     dialectOptions: getSslConfig()

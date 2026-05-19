@@ -6,7 +6,10 @@ const path = require('path');
 
 function getSslConfig() {
   if (process.env.DB_SSL_CA_BASE64) {
-    return { ssl: { ca: Buffer.from(process.env.DB_SSL_CA_BASE64, 'base64').toString('utf8') } };
+    console.log('Usando SSL desde variable de entorno (longitud:', process.env.DB_SSL_CA_BASE64.length, ')');
+    const ca = Buffer.from(process.env.DB_SSL_CA_BASE64, 'base64').toString('utf8');
+    console.log('CA empieza con:', ca.substring(0, 30));
+    return { ssl: { ca, rejectUnauthorized: true } };
   }
   const certPath = path.join(__dirname, '..', 'ca.pem');
   if (fs.existsSync(certPath)) {
